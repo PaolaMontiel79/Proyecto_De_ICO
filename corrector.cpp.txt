@@ -1,0 +1,337 @@
+/*****************************************************************************************************************
+	UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO
+	FACULTAD DE ESTUDIOS SUPERIORES -ARAGON-
+
+	Computadoras y programacion. 
+	Paola Fernanda Montiel Castañeda 323035336
+	
+	Quiso decir: Programa principal de la aplicacion de la distancia de Levenstein.
+	
+******************************************************************************************************************/
+
+
+#include "stdafx.h"
+#include <string.h>
+#include "corrector.h"
+#include <wctype.h> //Para poder usar la funcion towlower, es mejor que ctype.h porque soporta mas caracteres (como acentos).
+//Funciones publicas del proyecto
+/*****************************************************************************************************************
+	DICCIONARIO: Esta funcion crea el diccionario completo
+	char *	szNombre				:	Nombre del archivo de donde se sacaran las palabras del diccionario	
+	char	szPalabras[][TAMTOKEN]	:	Arreglo con las palabras completas del diccionario
+	int		iEstadisticas[]			:	Arreglo con el numero de veces que aparecen las palabras en el diccionario
+	int &	iNumElementos			:	Numero de elementos en el diccionario
+******************************************************************************************************************/
+void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[], int &iNumElementos)
+{
+	FILE* fp;
+	fopen_s(&fp, szNombre, "r"); //Abrir el archivo en modo lectura.
+
+	if (fp != NULL) { //Si el archivo si tiene una direccion encontrada.
+		iNumElementos = 0; //Inicializa el numero de elementos en 0.
+		int caracter; //Variable para leer caracter por caracter (Los guarda). Pero es de tipo int porque fgetc regresa un int y así evito el warning que el evaluador me manda
+		char szPalabraTemporal[TAMTOKEN]; //Variable para guardar caracteres mientras eliminamos y convertimos en minúsculas.
+		int contador = 0; //Indice para recorrer la variable de palabra temporal.
+
+		//Leer el primer caracter del archivo, pero cómo se repite lee todos los caracteres.
+		//La diferencia entre EOF y feof es que EOF es una constante, te dice que de plano ya se acabo el archivo.
+		// Mientras que feof está viendo si una lectura anterior llegó al final del archivo.
+		while ((caracter = fgetc(fp))!=EOF) { //Mientras no sea el final del archivo.
+			
+			char caracterLetra = (char)caracter; //Convierto mi caracter entero a caracter char para que pueda seguir leyendo mis separadores en ASCII
+			if (caracterLetra == '\n' || caracterLetra == '\r' || caracterLetra == '\t' || caracterLetra == ' ' || caracterLetra == ',' || caracterLetra == ';' || caracterLetra == '(' || caracterLetra == ')' || caracterLetra == '.') { //Separadores que NO se cuentan
+				szPalabraTemporal[contador] = '\0'; //Finalizar la palabra temporal (Se detiene).
+
+				if (contador > 0) { //Si el contador es mayor a 0, se leyó una palabra.
+					bool PalabraEncontrada = false; //Variable para saber si la palabra ya existe en el diccionario.
+
+					for (int i=0; i<iNumElementos; i++) { //Numero de palabras en el diccionario, diferente a contador (numero de caracteres).
+						
+						if (strcmp(szPalabras[i], szPalabraTemporal)==0) { //Comparo cada palabra del diccionario con la palabra temporal.(Son iguales porque es lo mismo que !strcmp)
+							PalabraEncontrada = true; //La palabra ya existe en el diccionario.
+							iEstadisticas[i]++; //Incrementar la estadistica de la palabra.
+							break; //Salir del ciclo.
+						}
+
+					}
+
+					if (PalabraEncontrada == false) {
+						if (iNumElementos < NUMPALABRAS) { //Valido el limite maximo de palabras en el diccionario.
+							strcpy_s(szPalabras[iNumElementos], TAMTOKEN, szPalabraTemporal); //Guardar la nueva palabra en el diccionario.
+							iEstadisticas[iNumElementos] = 1; //Inicializar la estadistica de la nueva palabra en 1.
+							iNumElementos++; //Incrementar el numero de elementos en el diccionario. (Porque es una nueva palabra).
+						}
+					}
+
+				}
+
+				contador = 0; //Reiniciar el contador.
+				szPalabraTemporal[contador] = '\0'; //Reiniciar la palabra temporal. Evito desbordamientos.
+			
+			} else { 
+				//El tolower lee el caracter en entero para ser compatible con EOF.
+				//Seguimos ocupando el caracter tipo entero para manejar las letras especiales fuera de ASCII.
+				caracter = towlower(caracter); //Convertir el caracter a minuscula.
+				if(contador<TAMTOKEN-1){
+				//Declaro que el caracter es tipo char para guardarlo en la variable temporal.
+				//Dejo de forzar un int dentro de un char.
+				szPalabraTemporal[contador] = (char)caracter; //Guardar el caracter en la variable POR LO MIENTRAS.
+				contador++; //Incrementar el indice.
+				}
+
+			}
+
+		}
+
+		if (contador>0){ //Es por sí quedo una palabrita por ahí
+			szPalabraTemporal[contador] = '\0';
+
+			bool PalabraEncontrada = false; //Variable de tipo bandera para saber si la palabra ya existe en el diccionario.
+
+			for (int i = 0; i < iNumElementos; i++) { //Este ciclo es para saber si la palabra ya existe en el diccionario y poner cuantas veces aparece.
+			
+				if (strcmp(szPalabras[i], szPalabraTemporal) == 0) {
+					PalabraEncontrada = true;
+					iEstadisticas[i]++; //La estadistica es cuantas veces aparece la palabra en el archivo.
+					break;
+				}
+			
+			}
+			
+			if (PalabraEncontrada == false) {
+				if (iNumElementos < NUMPALABRAS) { //Valido el limite maximo de palabras en el diccionario (Que son 70000)
+					strcpy_s(szPalabras[iNumElementos], TAMTOKEN, szPalabraTemporal); //Guardar la nueva palabra en el diccionario.
+					iEstadisticas[iNumElementos] = 1; //Inicializar la estadistica de la nueva palabra en 1.
+					iNumElementos++; //Incrementar el numero de elementos en el diccionario. (Porque es una nueva palabra).
+				}
+			}
+
+		}
+
+		bool bNoOrdenado = true; //Variable para saber si el arreglo ya está ordenado.
+
+		for (int j = 0; j < iNumElementos && bNoOrdenado; j++) {
+			bNoOrdenado = false; //Aquí la verdad, copie el burbujazo del profe.
+
+			for (int k= 0; k < iNumElementos - 1; k++) {
+
+				if (strcmp (szPalabras[k],szPalabras[k+1]) > 0){
+					//intercambio
+					char aux[TAMTOKEN]; //Variable auxiliar para intercambiar palabras, tiene que ser tipo char con el límite de tamtoken.
+					//Así como muevo posición de letras, muevo posición de estadisticas.
+					int auxEstadistica; //Variable auxiliar de tipo entero porque estadistica es cifra.
+					strcpy_s(aux, TAMTOKEN, szPalabras[k]); //Las palabras no se comparan o igual como un numero, sino que ocupan strcpy.
+					strcpy_s(szPalabras[k], TAMTOKEN, szPalabras[k + 1]); //(Destino,Tamaño,Origen)
+					strcpy_s(szPalabras[k+1],TAMTOKEN,aux);
+					auxEstadistica = iEstadisticas[k]; //Intercambio de estadisticas.
+					iEstadisticas[k] = iEstadisticas[k + 1];
+					iEstadisticas[k + 1] = auxEstadistica;
+
+					bNoOrdenado = true;
+				}
+
+			}
+
+		}
+
+		fclose(fp); //Cerrar el archivo.
+		
+	} else {
+		iNumElementos = 0; //Si el archivo no es encotrado, el numero de elementos estará vacío.
+	}
+
+}
+
+/*****************************************************************************************************************
+	ListaCandidatas: Esta funcion recupera desde el diccionario las palabras validas y su peso
+	Regresa las palabras ordenadas por su peso
+	char	szPalabrasSugeridas[][TAMTOKEN],	//Lista de palabras clonadas
+	int		iNumSugeridas,						//Lista de palabras clonadas
+	char	szPalabras[][TAMTOKEN],				//Lista de palabras del diccionario
+	int		iEstadisticas[],					//Lista de las frecuencias de las palabras
+	int		iNumElementos,						//Numero de elementos en el diccionario
+	char	szListaFinal[][TAMTOKEN],			//Lista final de palabras a sugerir
+	int		iPeso[],							//Peso de las palabras en la lista final
+	int &	iNumLista)							//Numero de elementos en la szListaFinal
+******************************************************************************************************************/
+void	ListaCandidatas		(
+	char	szPalabrasSugeridas[][TAMTOKEN],	//Lista de palabras clonadas
+	int		iNumSugeridas,						//Lista de palabras clonadas
+	char	szPalabras[][TAMTOKEN],				//Lista de palabras del diccionario
+	int		iEstadisticas[],					//Lista de las frecuencias de las palabras
+	int		iNumElementos,						//Numero de elementos en el diccionario
+	char	szListaFinal[][TAMTOKEN],			//Lista final de palabras a sugerir
+	int		iPeso[],							//Peso de las palabras en la lista final
+	int &	iNumLista)							//Numero de elementos en la szListaFinal
+{
+	//De TODAS las palabras clonadas, se busca cuales sí existen. Está funcion llama a las otras dos funciones.
+	iNumLista = 0; //Inicializo el numero de elementos en la lista final.
+	for (int paso = 0; paso < iNumSugeridas; paso++) { //Recorro todas las palabras clonadas. Por el numero de palabras clonadas
+
+		for (int c = 0; c < iNumElementos; c++) { //Recorro todas las palabras del diccionario. Por el numero de elementos en el diccionario.
+
+			if (strcmp(szPalabrasSugeridas[paso], szPalabras[c]) == 0) { //Aquí comparo si ambas variables son iguales		
+				strcpy_s(szListaFinal[iNumLista], TAMTOKEN, szPalabrasSugeridas[paso]);//Sí son iguales guardo las palabras que quedaron en la lista final.
+				iPeso[iNumLista] = iEstadisticas[c];//Es una asignación, pues las variables son de tipo entero y no de tipo char para ser strcpy_s
+				iNumLista++; //Se incrementa el numero de elementos
+				break;
+			}
+	
+		}
+
+	}
+	
+	bool bNoOrdenado = true; //Vuelvo a oupar el bucle del profe para ordenar las palabras por su peso.
+
+	for (int j = 0; j < iNumLista && bNoOrdenado; j++) {
+		bNoOrdenado = false;
+
+		for (int k = 0; k < iNumLista - 1; k++) {
+
+			if (iPeso[k] < iPeso[k + 1]) { //Si el peso de la palabra es menor al de la siguiente, entonces se intercambian.
+				//intercambio
+				char auxPalabrasFinales[TAMTOKEN];
+				int auxiliarPeso; 
+				strcpy_s(auxPalabrasFinales, TAMTOKEN, szListaFinal[k]);  //Intercambio de la posicion de palabras.
+				strcpy_s(szListaFinal[k], TAMTOKEN, szListaFinal[k + 1]); 
+				strcpy_s(szListaFinal[k + 1], TAMTOKEN, auxPalabrasFinales);
+				auxiliarPeso = iPeso[k]; //Intercambio de pesos.
+				iPeso[k] = iPeso[k + 1];
+				iPeso[k + 1] = auxiliarPeso;
+
+				bNoOrdenado = true;
+			}
+
+		}
+
+	}
+}
+
+/*****************************************************************************************************************
+	ClonaPalabras: toma una palabra y obtiene todas las combinaciones y permutaciones requeridas por el metodo
+	char *	szPalabraLeida,						// Palabra a clonar
+	char	szPalabrasSugeridas[][TAMTOKEN], 	//Lista de palabras clonadas
+	int &	iNumSugeridas)						//Numero de elementos en la lista
+******************************************************************************************************************/
+void	ClonaPalabras(
+	char* szPalabraLeida,						// Palabra a clonar
+	char	szPalabrasSugeridas[][TAMTOKEN], 	//Lista de palabras clonadas
+	int& iNumSugeridas)						//Numero de elementos en la lista
+{
+	iNumSugeridas = 0; //Lo inicializo en 0 para que no se desborde.
+	//Primero guardo la palabra original para que no se pierda y sea la que me falte cuando me evalua el código.
+	//Palabra original se guarda en la posicion 0.
+	strcpy_s(szPalabrasSugeridas[iNumSugeridas], TAMTOKEN, szPalabraLeida); //El evaluador me dice que tengo una palabra menos siempre
+	iNumSugeridas++; //Por eso, aumento el numero de sugeridas para agregar la palabra original.
+	int longitud;
+	longitud = strlen(szPalabraLeida); //Calculo la longitud de la palabra leida, strlen cuenta los caracteres hasta el nulo.
+
+	for (int posicion = 0; posicion < longitud; posicion++) { //Con este ciclo busco eliminar un caracter por posicion
+		char sinCaracter[TAMTOKEN]; //Esta variable como su nombre lo dice, va a guardar las palabras sin un caracter
+		int contador = 0; //Contador para recorrer la palabra leida y saber en que posicion estoy. De hecho es como en la funcion del diccionario.
+		int contadorDos = 0; //Contador para recorrer la variable sinCaracter y guardar los caracteres que no se eliminaron.
+
+		for (contador; contador < longitud; contador++) {
+
+			if (!(posicion == contador)) { //Posicion es literalmente la posicion que quiero eliminar, mientras contador es la posicion que estoy revisando.
+				sinCaracter[contadorDos] = szPalabraLeida[contador]; //Si no es la posicion a eliminar, la guardo en la variable temporal.
+				//contadorDos es la nueva posicion que tendran mis palabras guardadas en sin Caracter.
+				contadorDos++; //Incremento el contadorDos porque ya guarde un caracter.
+			}
+
+		}
+
+		sinCaracter[contadorDos] = '\0'; //Lo mismo que en la funcion diccionario, finalizo la palabra.
+		//La nueva palabra guardada en sinCaracter va ir dentro del arreglo de szPalabrasSugeridas en la posicion de iNumSugeridas
+		//sinCaracter representa una palabra, por lo tanto no necesita [] que representan direccion de memoria de una cadena.
+		strcpy_s(szPalabrasSugeridas[iNumSugeridas],TAMTOKEN, sinCaracter); //REPITO!! strcpy_s(destino(Recibe datos),tamaño,origen)
+		iNumSugeridas++; //Incremento el numero de sugeridas porque ya tengo una nueva palabra. (Esto es NUEVO!!)
+
+	}
+
+	//El siguiente codigo, hace la transposicion, está viendo la posicion de cada letra y la intercambia con la siguiente. Siempre y cuando tenga alguien al lado.
+	for (int i = 0; i < longitud-1; i++) { //TRANSposicion JAJAJA
+		char PalabraRespaldo[TAMTOKEN]; //Variable para respaldar la palabra original.
+		//szPalabraLeida no va a sufrir ninguna modificacion porque se va a trabajar con la copia siempre (PalabraRespaldo).
+		strcpy_s(PalabraRespaldo, TAMTOKEN, szPalabraLeida); //Aquí estamos justamente respaldandola para que el robot no haga de las suyas.
+		//Volvemos a hacer un tipo burbujazo para intercambiar las letras. Cómo el del profe
+		char auxCaracter;
+		//Al ser caracteres no ocupan strcpy, solo ocupan asignacion "=".
+		auxCaracter = PalabraRespaldo[i]; //No tiene posiciones auxCaracter por ser una variable de tipo caracter
+		PalabraRespaldo[i] = PalabraRespaldo[i + 1]; //Mover la posicion del vecino de la derecha al de su lado.
+		PalabraRespaldo[i + 1] = auxCaracter;
+		//Ahora si guardamos la nueva palabra en szPalabrasSugeridas.
+		strcpy_s(szPalabrasSugeridas[iNumSugeridas], TAMTOKEN, PalabraRespaldo); //iNumSugeridas es la posicion, pues representa un espacio posible vacío.
+		iNumSugeridas++; //Vuelvo a incrementar el numero de palabras sugeridas, porque nuevamente tengo una nueva palabra.
+	}
+	
+	//En este bucle yo sustitui una letra de la palabra por una del abecedario.
+	char abecedario[] = "abcdefghijklmnñopqrstuvwxyzáéíóú"; //Abecedario.
+	int longitud_abecedario = strlen(abecedario); //Sabemos que son 32 letras pero ocupamos strlen por si acaso. Sin eso el código puede ser frágil.
+
+	for (int j = 0; j < longitud; j++) { //posicion donde se inserta nueva letra.
+
+		for (int k = 0;k<longitud_abecedario ;k++) { //posicion del abecedario, es la nueva letra.
+			char PalabraRespaldoDos[TAMTOKEN]; //Igual que la anterior, respalda la palabra original para trabajar solamente con la copia.
+			strcpy_s(PalabraRespaldoDos, TAMTOKEN, szPalabraLeida); //Palabra original respaldada.
+			PalabraRespaldoDos[j] = abecedario[k]; //La posicion a cambiar es j mientras que la nueva letra esta en k.
+			strcpy_s(szPalabrasSugeridas[iNumSugeridas], TAMTOKEN, PalabraRespaldoDos); //El cambio está hecho, así que se guarda.
+			iNumSugeridas++; //Vuelvo a incrementar porque ya tengo otras nuevas palabras.
+		}
+
+	}
+
+	//En este bucle agrego una letra del abecedario a la palabra, NO es cómo el anterior. Aquí AGREGO una letra.
+	for (int a = 0; a <= longitud; a++) { //Incluye un espacio extra.
+
+		for (int b = 0; b < longitud_abecedario; b++) { //Recorre la posicion del abecedario.
+			char insertarPalabra[TAMTOKEN]; //No se hace copia con la palabra original porque está, esta más larga.
+			//Este ciclo se parece al primero, pues ambas condiciones pareciera que van a terminar en la misma posicion.
+			//NO se trata de una diferencia matemática, sino una de propósito.
+
+			for (int c = 0; c < longitud+1; c++) { //Es la posicion dentro de la nueva longitud que incluye el nulo como un espacio.
+				//NO cuenta el nulo en sí, solo ve un espacio para insertar la nueva letra.
+				//La variable c hace tres cosas diferentes dependiendo de su valor en comparación con a.
+				//Toda esta condicion solo es para recorrer la longitud agregar SOLO UNA VEZ una letra del abecedario y después seguir con las demás letras "originales".
+
+				if (c == a) { //Si "c" es igual a "a", es la posicion donde se inserta la nueva letra.
+					insertarPalabra[c] = abecedario[b]; //por ejemplo posicion de a=2 y la palabra es "sol" entonces se agrega por ejemplo "soa"
+				} else if (c > a) { //Aquí solo está diciendo que si ya pasó lo de agregar la letra del abecedario entonces siga con las letras originales.
+					insertarPalabra[c] = szPalabraLeida[c - 1]; //Si teniamos el "soa" ahora se sigue de largo y queda "soal"
+					//El c-1 está diciendo "Ey regresate a una posicion antes, agarra la letra original y agregala cómo si nada hubiera pasado >:)"
+				} else { //Aquí es sí c>a, osea que todavía no llegamos a la posicion donde se agrega la nueva letra.
+					insertarPalabra[c] = szPalabraLeida[c]; //Es el "so", aun no llegabamos a la posicion 2.
+				}
+
+			}
+
+			insertarPalabra[longitud + 1] = '\0'; //Finalizo la nueva palabra agregada con la nueva longitud.
+			strcpy_s(szPalabrasSugeridas[iNumSugeridas], TAMTOKEN, insertarPalabra); //Lo mismo, guardo la nueva palabra en el arreglo de sugeridas.
+			iNumSugeridas++; //Otra palabra nueva, entonces se vuelve a incrementar el numero de sugeridas.
+		}
+
+	}
+
+	//Vuelvo a ordenar alfabeticamente las palabras sugeridas, cómo en el diccionario. (Con el burbujazo del profe otra vez)
+	bool bNoOrdenado = true; //La variable bandera está diciendo que sí, no está ordenado.
+
+	for (int j = 0; j < iNumSugeridas && bNoOrdenado; j++) {
+		bNoOrdenado = false; //Aquí la verdad, copie el burbujazo del profe.
+
+		for (int k = 0; k < iNumSugeridas - 1; k++) {
+
+			if (strcmp(szPalabrasSugeridas[k], szPalabrasSugeridas[k + 1]) > 0) {
+				//intercambio
+				char auxPalabrasSugeridas[TAMTOKEN];
+				strcpy_s(auxPalabrasSugeridas, TAMTOKEN, szPalabrasSugeridas[k]); //Ya no hay comentarios en esto, ya se sabe que onda con cada uno.
+				strcpy_s(szPalabrasSugeridas[k], TAMTOKEN, szPalabrasSugeridas[k + 1]);
+				strcpy_s(szPalabrasSugeridas[k + 1], TAMTOKEN, auxPalabrasSugeridas);
+
+				bNoOrdenado = true;
+			}
+
+		}
+
+	}
+}
+
