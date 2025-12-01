@@ -3,7 +3,7 @@
 	FACULTAD DE ESTUDIOS SUPERIORES -ARAGON-
 
 	Computadoras y programacion. 
-	Paola Fernanda Montiel CastaÒeda 323035336
+	Paola Fernanda Montiel Casta√±eda 323035336
 	
 	Quiso decir: Programa principal de la aplicacion de la distancia de Levenstein.
 	
@@ -29,20 +29,20 @@ void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadistic
 
 	if (fp != NULL) { //Si el archivo si tiene una direccion encontrada.
 		iNumElementos = 0; //Inicializa el numero de elementos en 0.
-		int caracter; //Variable para leer caracter por caracter (Los guarda). Pero es de tipo int porque fgetc regresa un int y asÌ evito el warning que el evaluador me manda
-		char szPalabraTemporal[TAMTOKEN]; //Variable para guardar caracteres mientras eliminamos y convertimos en min˙sculas.
+		int caracter; //Variable para leer caracter por caracter (Los guarda). Pero es de tipo int porque fgetc regresa un int y as√≠ evito el warning que el evaluador me manda
+		char szPalabraTemporal[TAMTOKEN]; //Variable para guardar caracteres mientras eliminamos y convertimos en min√∫sculas.
 		int contador = 0; //Indice para recorrer la variable de palabra temporal.
 
-		//Leer el primer caracter del archivo, pero cÛmo se repite lee todos los caracteres.
+		//Leer el primer caracter del archivo, pero c√≥mo se repite lee todos los caracteres.
 		//La diferencia entre EOF y feof es que EOF es una constante, te dice que de plano ya se acabo el archivo.
-		// Mientras que feof est· viendo si una lectura anterior llegÛ al final del archivo.
+		// Mientras que feof est√° viendo si una lectura anterior lleg√≥ al final del archivo.
 		while ((caracter = fgetc(fp))!=EOF) { //Mientras no sea el final del archivo.
 			
 			char caracterLetra = (char)caracter; //Convierto mi caracter entero a caracter char para que pueda seguir leyendo mis separadores en ASCII
 			if (caracterLetra == '\n' || caracterLetra == '\r' || caracterLetra == '\t' || caracterLetra == ' ' || caracterLetra == ',' || caracterLetra == ';' || caracterLetra == '(' || caracterLetra == ')' || caracterLetra == '.') { //Separadores que NO se cuentan
 				szPalabraTemporal[contador] = '\0'; //Finalizar la palabra temporal (Se detiene).
 
-				if (contador > 0) { //Si el contador es mayor a 0, se leyÛ una palabra.
+				if (contador > 0) { //Si el contador es mayor a 0, se ley√≥ una palabra.
 					bool PalabraEncontrada = false; //Variable para saber si la palabra ya existe en el diccionario.
 
 					for (int i=0; i<iNumElementos; i++) { //Numero de palabras en el diccionario, diferente a contador (numero de caracteres).
@@ -83,7 +83,7 @@ void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadistic
 
 		}
 
-		if (contador>0){ //Es por sÌ quedo una palabrita por ahÌ
+		if (contador>0){ //Es por s√≠ quedo una palabrita por ah√≠
 			szPalabraTemporal[contador] = '\0';
 
 			bool PalabraEncontrada = false; //Variable de tipo bandera para saber si la palabra ya existe en el diccionario.
@@ -108,20 +108,20 @@ void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadistic
 
 		}
 
-		bool bNoOrdenado = true; //Variable para saber si el arreglo ya est· ordenado.
+		bool bNoOrdenado = true; //Variable para saber si el arreglo ya est√° ordenado.
 
 		for (int j = 0; j < iNumElementos && bNoOrdenado; j++) {
-			bNoOrdenado = false; //AquÌ la verdad, copie el burbujazo del profe.
+			bNoOrdenado = false; //Aqu√≠ la verdad, copie el burbujazo del profe.
 
 			for (int k= 0; k < iNumElementos - 1; k++) {
 
 				if (strcmp (szPalabras[k],szPalabras[k+1]) > 0){
 					//intercambio
-					char aux[TAMTOKEN]; //Variable auxiliar para intercambiar palabras, tiene que ser tipo char con el lÌmite de tamtoken.
-					//AsÌ como muevo posiciÛn de letras, muevo posiciÛn de estadisticas.
+					char aux[TAMTOKEN]; //Variable auxiliar para intercambiar palabras, tiene que ser tipo char con el l√≠mite de tamtoken.
+					//As√≠ como muevo posici√≥n de letras, muevo posici√≥n de estadisticas.
 					int auxEstadistica; //Variable auxiliar de tipo entero porque estadistica es cifra.
 					strcpy_s(aux, TAMTOKEN, szPalabras[k]); //Las palabras no se comparan o igual como un numero, sino que ocupan strcpy.
-					strcpy_s(szPalabras[k], TAMTOKEN, szPalabras[k + 1]); //(Destino,TamaÒo,Origen)
+					strcpy_s(szPalabras[k], TAMTOKEN, szPalabras[k + 1]); //(Destino,Tama√±o,Origen)
 					strcpy_s(szPalabras[k+1],TAMTOKEN,aux);
 					auxEstadistica = iEstadisticas[k]; //Intercambio de estadisticas.
 					iEstadisticas[k] = iEstadisticas[k + 1];
@@ -137,7 +137,7 @@ void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadistic
 		fclose(fp); //Cerrar el archivo.
 		
 	} else {
-		iNumElementos = 0; //Si el archivo no es encotrado, el numero de elementos estar· vacÌo.
+		iNumElementos = 0; //Si el archivo no es encotrado, el numero de elementos estar√° vac√≠o.
 	}
 
 }
@@ -164,15 +164,15 @@ void	ListaCandidatas		(
 	int		iPeso[],							//Peso de las palabras en la lista final
 	int &	iNumLista)							//Numero de elementos en la szListaFinal
 {
-	//De TODAS las palabras clonadas, se busca cuales sÌ existen. Est· funcion llama a las otras dos funciones.
+	//De TODAS las palabras clonadas, se busca cuales s√≠ existen. Est√° funcion llama a las otras dos funciones.
 	iNumLista = 0; //Inicializo el numero de elementos en la lista final.
 	for (int paso = 0; paso < iNumSugeridas; paso++) { //Recorro todas las palabras clonadas. Por el numero de palabras clonadas
 
 		for (int c = 0; c < iNumElementos; c++) { //Recorro todas las palabras del diccionario. Por el numero de elementos en el diccionario.
 
-			if (strcmp(szPalabrasSugeridas[paso], szPalabras[c]) == 0) { //AquÌ comparo si ambas variables son iguales		
-				strcpy_s(szListaFinal[iNumLista], TAMTOKEN, szPalabrasSugeridas[paso]);//SÌ son iguales guardo las palabras que quedaron en la lista final.
-				iPeso[iNumLista] = iEstadisticas[c];//Es una asignaciÛn, pues las variables son de tipo entero y no de tipo char para ser strcpy_s
+			if (strcmp(szPalabrasSugeridas[paso], szPalabras[c]) == 0) { //Aqu√≠ comparo si ambas variables son iguales		
+				strcpy_s(szListaFinal[iNumLista], TAMTOKEN, szPalabrasSugeridas[paso]);//S√≠ son iguales guardo las palabras que quedaron en la lista final.
+				iPeso[iNumLista] = iEstadisticas[c];//Es una asignaci√≥n, pues las variables son de tipo entero y no de tipo char para ser strcpy_s
 				iNumLista++; //Se incrementa el numero de elementos
 				break;
 			}
@@ -219,7 +219,7 @@ void	ClonaPalabras(
 	int& iNumSugeridas)						//Numero de elementos en la lista
 {
 	iNumSugeridas = 0; //Lo inicializo en 0 para que no se desborde.
-	//Primero guardo la palabra original para que no se pierda y sea la que me falte cuando me evalua el cÛdigo.
+	//Primero guardo la palabra original para que no se pierda y sea la que me falte cuando me evalua el c√≥digo.
 	//Palabra original se guarda en la posicion 0.
 	strcpy_s(szPalabrasSugeridas[iNumSugeridas], TAMTOKEN, szPalabraLeida); //El evaluador me dice que tengo una palabra menos siempre
 	iNumSugeridas++; //Por eso, aumento el numero de sugeridas para agregar la palabra original.
@@ -244,30 +244,30 @@ void	ClonaPalabras(
 		sinCaracter[contadorDos] = '\0'; //Lo mismo que en la funcion diccionario, finalizo la palabra.
 		//La nueva palabra guardada en sinCaracter va ir dentro del arreglo de szPalabrasSugeridas en la posicion de iNumSugeridas
 		//sinCaracter representa una palabra, por lo tanto no necesita [] que representan direccion de memoria de una cadena.
-		strcpy_s(szPalabrasSugeridas[iNumSugeridas],TAMTOKEN, sinCaracter); //REPITO!! strcpy_s(destino(Recibe datos),tamaÒo,origen)
+		strcpy_s(szPalabrasSugeridas[iNumSugeridas],TAMTOKEN, sinCaracter); //REPITO!! strcpy_s(destino(Recibe datos),tama√±o,origen)
 		iNumSugeridas++; //Incremento el numero de sugeridas porque ya tengo una nueva palabra. (Esto es NUEVO!!)
 
 	}
 
-	//El siguiente codigo, hace la transposicion, est· viendo la posicion de cada letra y la intercambia con la siguiente. Siempre y cuando tenga alguien al lado.
+	//El siguiente codigo, hace la transposicion, est√° viendo la posicion de cada letra y la intercambia con la siguiente. Siempre y cuando tenga alguien al lado.
 	for (int i = 0; i < longitud-1; i++) { //TRANSposicion JAJAJA
 		char PalabraRespaldo[TAMTOKEN]; //Variable para respaldar la palabra original.
 		//szPalabraLeida no va a sufrir ninguna modificacion porque se va a trabajar con la copia siempre (PalabraRespaldo).
-		strcpy_s(PalabraRespaldo, TAMTOKEN, szPalabraLeida); //AquÌ estamos justamente respaldandola para que el robot no haga de las suyas.
-		//Volvemos a hacer un tipo burbujazo para intercambiar las letras. CÛmo el del profe
+		strcpy_s(PalabraRespaldo, TAMTOKEN, szPalabraLeida); //Aqu√≠ estamos justamente respaldandola para que el robot no haga de las suyas.
+		//Volvemos a hacer un tipo burbujazo para intercambiar las letras. C√≥mo el del profe
 		char auxCaracter;
 		//Al ser caracteres no ocupan strcpy, solo ocupan asignacion "=".
 		auxCaracter = PalabraRespaldo[i]; //No tiene posiciones auxCaracter por ser una variable de tipo caracter
 		PalabraRespaldo[i] = PalabraRespaldo[i + 1]; //Mover la posicion del vecino de la derecha al de su lado.
 		PalabraRespaldo[i + 1] = auxCaracter;
 		//Ahora si guardamos la nueva palabra en szPalabrasSugeridas.
-		strcpy_s(szPalabrasSugeridas[iNumSugeridas], TAMTOKEN, PalabraRespaldo); //iNumSugeridas es la posicion, pues representa un espacio posible vacÌo.
+		strcpy_s(szPalabrasSugeridas[iNumSugeridas], TAMTOKEN, PalabraRespaldo); //iNumSugeridas es la posicion, pues representa un espacio posible vac√≠o.
 		iNumSugeridas++; //Vuelvo a incrementar el numero de palabras sugeridas, porque nuevamente tengo una nueva palabra.
 	}
 	
 	//En este bucle yo sustitui una letra de la palabra por una del abecedario.
-	char abecedario[] = "abcdefghijklmnÒopqrstuvwxyz·ÈÌÛ˙"; //Abecedario.
-	int longitud_abecedario = strlen(abecedario); //Sabemos que son 32 letras pero ocupamos strlen por si acaso. Sin eso el cÛdigo puede ser fr·gil.
+	char abecedario[] = "abcdefghijklmn√±opqrstuvwxyz√°√©√≠√≥√∫"; //Abecedario.
+	int longitud_abecedario = strlen(abecedario); //Sabemos que son 32 letras pero ocupamos strlen por si acaso. Sin eso el c√≥digo puede ser fr√°gil.
 
 	for (int j = 0; j < longitud; j++) { //posicion donde se inserta nueva letra.
 
@@ -275,31 +275,31 @@ void	ClonaPalabras(
 			char PalabraRespaldoDos[TAMTOKEN]; //Igual que la anterior, respalda la palabra original para trabajar solamente con la copia.
 			strcpy_s(PalabraRespaldoDos, TAMTOKEN, szPalabraLeida); //Palabra original respaldada.
 			PalabraRespaldoDos[j] = abecedario[k]; //La posicion a cambiar es j mientras que la nueva letra esta en k.
-			strcpy_s(szPalabrasSugeridas[iNumSugeridas], TAMTOKEN, PalabraRespaldoDos); //El cambio est· hecho, asÌ que se guarda.
+			strcpy_s(szPalabrasSugeridas[iNumSugeridas], TAMTOKEN, PalabraRespaldoDos); //El cambio est√° hecho, as√≠ que se guarda.
 			iNumSugeridas++; //Vuelvo a incrementar porque ya tengo otras nuevas palabras.
 		}
 
 	}
 
-	//En este bucle agrego una letra del abecedario a la palabra, NO es cÛmo el anterior. AquÌ AGREGO una letra.
+	//En este bucle agrego una letra del abecedario a la palabra, NO es c√≥mo el anterior. Aqu√≠ AGREGO una letra.
 	for (int a = 0; a <= longitud; a++) { //Incluye un espacio extra.
 
 		for (int b = 0; b < longitud_abecedario; b++) { //Recorre la posicion del abecedario.
-			char insertarPalabra[TAMTOKEN]; //No se hace copia con la palabra original porque est·, esta m·s larga.
+			char insertarPalabra[TAMTOKEN]; //No se hace copia con la palabra original porque est√°, esta m√°s larga.
 			//Este ciclo se parece al primero, pues ambas condiciones pareciera que van a terminar en la misma posicion.
-			//NO se trata de una diferencia matem·tica, sino una de propÛsito.
+			//NO se trata de una diferencia matem√°tica, sino una de prop√≥sito.
 
 			for (int c = 0; c < longitud+1; c++) { //Es la posicion dentro de la nueva longitud que incluye el nulo como un espacio.
-				//NO cuenta el nulo en sÌ, solo ve un espacio para insertar la nueva letra.
-				//La variable c hace tres cosas diferentes dependiendo de su valor en comparaciÛn con a.
-				//Toda esta condicion solo es para recorrer la longitud agregar SOLO UNA VEZ una letra del abecedario y despuÈs seguir con las dem·s letras "originales".
+				//NO cuenta el nulo en s√≠, solo ve un espacio para insertar la nueva letra.
+				//La variable c hace tres cosas diferentes dependiendo de su valor en comparaci√≥n con a.
+				//Toda esta condicion solo es para recorrer la longitud agregar SOLO UNA VEZ una letra del abecedario y despu√©s seguir con las dem√°s letras "originales".
 
 				if (c == a) { //Si "c" es igual a "a", es la posicion donde se inserta la nueva letra.
 					insertarPalabra[c] = abecedario[b]; //por ejemplo posicion de a=2 y la palabra es "sol" entonces se agrega por ejemplo "soa"
-				} else if (c > a) { //AquÌ solo est· diciendo que si ya pasÛ lo de agregar la letra del abecedario entonces siga con las letras originales.
+				} else if (c > a) { //Aqu√≠ solo est√° diciendo que si ya pas√≥ lo de agregar la letra del abecedario entonces siga con las letras originales.
 					insertarPalabra[c] = szPalabraLeida[c - 1]; //Si teniamos el "soa" ahora se sigue de largo y queda "soal"
-					//El c-1 est· diciendo "Ey regresate a una posicion antes, agarra la letra original y agregala cÛmo si nada hubiera pasado >:)"
-				} else { //AquÌ es sÌ c>a, osea que todavÌa no llegamos a la posicion donde se agrega la nueva letra.
+					//El c-1 est√° diciendo "Ey regresate a una posicion antes, agarra la letra original y agregala c√≥mo si nada hubiera pasado >:)"
+				} else { //Aqu√≠ es s√≠ c>a, osea que todav√≠a no llegamos a la posicion donde se agrega la nueva letra.
 					insertarPalabra[c] = szPalabraLeida[c]; //Es el "so", aun no llegabamos a la posicion 2.
 				}
 
@@ -312,11 +312,11 @@ void	ClonaPalabras(
 
 	}
 
-	//Vuelvo a ordenar alfabeticamente las palabras sugeridas, cÛmo en el diccionario. (Con el burbujazo del profe otra vez)
-	bool bNoOrdenado = true; //La variable bandera est· diciendo que sÌ, no est· ordenado.
+	//Vuelvo a ordenar alfabeticamente las palabras sugeridas, c√≥mo en el diccionario. (Con el burbujazo del profe otra vez)
+	bool bNoOrdenado = true; //La variable bandera est√° diciendo que s√≠, no est√° ordenado.
 
 	for (int j = 0; j < iNumSugeridas && bNoOrdenado; j++) {
-		bNoOrdenado = false; //AquÌ la verdad, copie el burbujazo del profe.
+		bNoOrdenado = false; //Aqu√≠ la verdad, copie el burbujazo del profe.
 
 		for (int k = 0; k < iNumSugeridas - 1; k++) {
 
@@ -334,4 +334,5 @@ void	ClonaPalabras(
 
 	}
 }
+
 
