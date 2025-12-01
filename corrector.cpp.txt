@@ -333,11 +333,5 @@ void	ClonaPalabras(
 		}
 
 	}
+
 }
-
-
-
-
-
-
-
